@@ -19,5 +19,8 @@ func main() {
 		tmpl.Execute(w, nil)
 	})
 
+	fs := http.FileServer(http.Dir("./assets/videos/"))
+	http.Handle("/video/", http.StripPrefix("/video/", fs))
+
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
