@@ -3,11 +3,19 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hello World</title>
+    <title>Home Streaming</title>
+    <link rel="stylesheet" href="/static/css/home/style.css">
 </head>
 <body>
     <h1>Video Streaming from Go Server</h1>
-    <a href="/videos/sample.mp4">Video A</a>
-    <a href="/videos/sample-2.mp4">Video B</a>
+
+    <div id="video-container">
+        <ul id="videoList">
+            <li><a href="/videos/sample.mp4">Video A</a></li>
+            <li><a href="/videos/sample-2.mp4">Video B</a></li>
+        </ul>
+
+    </div>
+    
 </body>
 </html>
