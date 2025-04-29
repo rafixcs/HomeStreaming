@@ -47,7 +47,10 @@ function Home() {
   ];
 
   useEffect(() => {
-    setVideos(mockVideos);
+    fetchVideos().then((value) => {
+      console.log(value)
+      setVideos(value)
+    })
   }, []);
 
   return (
