@@ -63,7 +63,7 @@ func main() {
 	r.Use(middleware.Logger)
 	//r.Use(JsonApplicationHeader)
 	r.Use(corsHandler.Handler)
-	r.Use(cacheControl)
+	//  r.Use(cacheControl)
 
 	r.Get("/videos", func(w http.ResponseWriter, r *http.Request) {
 		//path := http.Dir("./assets/videos/")
@@ -73,7 +73,6 @@ func main() {
 			return
 		}
 
-		log.Print(videos)
 		responseContent := videos
 		json.NewEncoder(w).Encode(&responseContent)
 	})
@@ -148,7 +147,7 @@ func processVideoFile(path string, info os.FileInfo) (Video, error) {
 	id := strings.TrimSuffix(filename, filepath.Ext(filename))
 
 	// Generate thumbnail if it doesn't exist
-	thumbnailPath := filepath.Join("thumbnails", id+".jpg")
+	thumbnailPath := filepath.Join("./assets/thumbnails", id+".jpg")
 	if _, err := os.Stat(thumbnailPath); os.IsNotExist(err) {
 		err = generateThumbnail(path, thumbnailPath)
 		if err != nil {
@@ -237,11 +236,16 @@ func ServeFiles(r chi.Router, path string, root http.FileSystem) {
 		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
 		path += "/"
 	}
-	path += "*"
+	//path += "*"
 
-	r.Get(path, func(w http.ResponseWriter, r *http.Request) {
+	r.Get(path+"{}", func(w http.ResponseWriter, r *http.Request) {
+		log.Println("Got request")
+		thumb := strings.Split(r.URL.Path, "/")
+		path := filepath.Join("./assets/thumbnails/", thumb[len(thumb)-1])
+		log.Println(path)
+
 		// Custom error handling
-		if _, err := os.Stat(filepath.Join("assets/"+path, strings.TrimPrefix(r.URL.Path, path))); os.IsNotExist(err) {
+		if _, err := os.Stat(path); os.IsNotExist(err) {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}

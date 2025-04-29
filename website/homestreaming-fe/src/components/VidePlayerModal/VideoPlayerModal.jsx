@@ -1,7 +1,9 @@
 import React from 'react';
 import './VideoPlayerModal.css';
 
-function VideoPlayerModal({ video, onClose }) {
+function VideoPlayerModal({ video, onClose }) { 
+  console.log(video)
+
   if (!video) return null;
   return (
     <div className="modal-overlay" onClick={onClose}>
