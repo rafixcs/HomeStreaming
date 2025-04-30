@@ -27,6 +27,8 @@ func ScanVideoDirectory(dirPath string) ([]Video, error) {
 		".wmv": true,
 	}
 
+	log.Println(dirPath)
+
 	err := filepath.Walk(dirPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err

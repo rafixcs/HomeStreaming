@@ -3,6 +3,7 @@ package http
 import (
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/go-chi/chi/v5"
 	chi_middleware "github.com/go-chi/chi/v5/middleware"
@@ -10,7 +11,7 @@ import (
 	"github.com/rafixcs/homestreaming/src/presentation/api/routes"
 )
 
-const PORT = "8080"
+var PORT = os.Getenv("PORT")
 
 func RunServer() {
 	r := chi.NewRouter()
