@@ -51,7 +51,7 @@ type VideoListResponse []Video
 func main() {
 
 	corsHandler := cors.New(cors.Options{
-		AllowedOrigins:   []string{"http://localhost:3000"}, // Add your React app URL
+		AllowedOrigins:   []string{"*"}, // Add your React app URL
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type"},
 		ExposedHeaders:   []string{"Link"},
