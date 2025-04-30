@@ -1,0 +1,108 @@
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.9);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    position: relative;
+    width: 90vw;
+    max-width: 1200px;
+    background: #181818;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+.video-player {
+    width: 100%;
+    aspect-ratio: 16/9;
+    /*background: #000;*/
+    display: block;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, 0.7);
+    border: 2px solid #fff;
+    color: #fff;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    z-index: 2;
+}
+
+.close-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    transform: scale(1.1);
+}
+
+.video-controls {
+    padding: 15px;
+    background: #181818;
+}
+
+.video-info {
+    padding: 20px;
+    color: #fff;
+}
+
+.video-title {
+    font-size: 24px;
+    margin-bottom: 10px;
+}
+
+.video-description {
+    font-size: 14px;
+    color: #999;
+    line-height: 1.5;
+}
+
+/* Custom video player controls */
+.video-player::-webkit-media-controls {
+    --background-color: rgba(0, 0, 0, 0.7);
+}
+
+.video-player::-webkit-media-controls-panel {
+    background-color: rgba(0, 0, 0, 0.7);
+}
+
+.video-player::-webkit-media-controls-play-button {
+    background-color: rgba(255, 255, 255, 0.8);
+    border-radius: 50%;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 100vw;
+        height: 100vh;
+        border-radius: 0;
+    }
+
+    .video-player {
+        height: 100vh;
+        object-fit: contain;
+    }
+
+    .close-btn {
+        top: 20px;
+        right: 20px;
+    }
+}
