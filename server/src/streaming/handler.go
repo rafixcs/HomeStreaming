@@ -58,7 +58,6 @@ func processVideoFile(path string, info os.FileInfo) (Video, error) {
 	filename := filepath.Base(path)
 	id := strings.TrimSuffix(filename, filepath.Ext(filename))
 
-	// Generate thumbnail if it doesn't exist
 	thumbnailPath := filepath.Join("./assets/thumbnails", id+".jpg")
 	if _, err := os.Stat(thumbnailPath); os.IsNotExist(err) {
 		err = generateThumbnail(path, thumbnailPath)
@@ -67,13 +66,11 @@ func processVideoFile(path string, info os.FileInfo) (Video, error) {
 		}
 	}
 
-	// Get video metadata
 	metadata, err := getVideoMetadata(path)
 	if err != nil {
 		return Video{}, fmt.Errorf("metadata extraction failed: %v", err)
 	}
 
-	// Create video object
 	video := Video{
 		ID:           id,
 		Title:        strings.TrimSuffix(filename, filepath.Ext(filename)),
@@ -83,7 +80,6 @@ func processVideoFile(path string, info os.FileInfo) (Video, error) {
 		CreatedAt:    info.ModTime(),
 	}
 
-	// Add metadata if available
 	if metadata != nil && len(metadata.Streams) > 0 {
 		for _, stream := range metadata.Streams {
 			if stream.CodecType == "video" {
@@ -136,7 +132,6 @@ func getVideoMetadata(videoPath string) (*VideoMetadata, error) {
 	return &metadata, nil
 }
 
-// ServeFiles serves static files with custom handling
 func ServeFiles(r chi.Router, path string, root http.FileSystem) {
 	if strings.ContainsAny(path, "{}*") {
 		panic("FileServer does not permit URL parameters.")
