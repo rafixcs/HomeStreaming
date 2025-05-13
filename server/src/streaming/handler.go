@@ -148,7 +148,6 @@ func ServeFiles(r chi.Router, path string, root http.FileSystem) {
 		r.Get(path, http.RedirectHandler(path+"/", 301).ServeHTTP)
 		path += "/"
 	}
-	//path += "*"
 
 	r.Get(path+"{}", func(w http.ResponseWriter, r *http.Request) {
 		log.Println("Got request")
@@ -156,13 +155,11 @@ func ServeFiles(r chi.Router, path string, root http.FileSystem) {
 		path := filepath.Join("./assets/thumbnails/", thumb[len(thumb)-1])
 		log.Println(path)
 
-		// Custom error handling
 		if _, err := os.Stat(path); os.IsNotExist(err) {
 			http.Error(w, "File not found", http.StatusNotFound)
 			return
 		}
 
-		// Set cache headers
 		w.Header().Set("Cache-Control", "max-age=31536000, public")
 		w.Header().Set("X-Content-Type-Options", "nosniff")
 
@@ -191,11 +188,9 @@ func getContentType(filename string) string {
 }
 
 func ServeVideo(w http.ResponseWriter, r *http.Request) {
-	// Extract the filename from the URL
 	filePath := strings.TrimPrefix(r.URL.Path, "/video/")
 	videoPath := filepath.Join("./assets/videos", filePath)
 
-	// Open the video file
 	video, err := os.Open(videoPath)
 	if err != nil {
 		http.Error(w, "Video not found", http.StatusNotFound)
@@ -203,38 +198,31 @@ func ServeVideo(w http.ResponseWriter, r *http.Request) {
 	}
 	defer video.Close()
 
-	// Get video file information
 	videoInfo, err := video.Stat()
 	if err != nil {
 		http.Error(w, "Failed to get video info", http.StatusInternalServerError)
 		return
 	}
 
-	// Get the video size
 	videoSize := videoInfo.Size()
 
-	// Get the content type based on file extension
 	contentType := getContentType(videoPath)
 	w.Header().Set("Content-Type", contentType)
 
-	// Handle range requests for video streaming
 	rangeHeader := r.Header.Get("Range")
 	if rangeHeader != "" {
-		// Parse the range header
 		ranges := strings.Split(strings.TrimPrefix(rangeHeader, "bytes="), "-")
 		if len(ranges) != 2 {
 			http.Error(w, "Invalid range header", http.StatusBadRequest)
 			return
 		}
 
-		// Parse start range
 		start, err := strconv.ParseInt(ranges[0], 10, 64)
 		if err != nil {
 			http.Error(w, "Invalid range header", http.StatusBadRequest)
 			return
 		}
 
-		// Parse end range
 		var end int64
 		if ranges[1] == "" {
 			end = videoSize - 1
@@ -246,38 +234,33 @@ func ServeVideo(w http.ResponseWriter, r *http.Request) {
 			}
 		}
 
-		// Validate ranges
 		if start >= videoSize || end >= videoSize {
 			w.Header().Set("Content-Range", fmt.Sprintf("bytes */%d", videoSize))
 			http.Error(w, "Requested range not satisfiable", http.StatusRequestedRangeNotSatisfiable)
 			return
 		}
 
-		// Set headers for partial content
 		w.Header().Set("Content-Range", fmt.Sprintf("bytes %d-%d/%d", start, end, videoSize))
 		w.Header().Set("Accept-Ranges", "bytes")
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", end-start+1))
 		w.WriteHeader(http.StatusPartialContent)
 
-		// Seek to start position
 		_, err = video.Seek(start, io.SeekStart)
 		if err != nil {
 			http.Error(w, "Failed to seek video", http.StatusInternalServerError)
 			return
 		}
 
-		// Stream the video chunk
 		_, err = io.CopyN(w, video, end-start+1)
 		if err != nil {
-			return // Client probably disconnected
+			return
 		}
 	} else {
-		// No range requested, serve the entire file
 		w.Header().Set("Content-Length", fmt.Sprintf("%d", videoSize))
 		w.Header().Set("Accept-Ranges", "bytes")
 		_, err = io.Copy(w, video)
 		if err != nil {
-			return // Client probably disconnected
+			return
 		}
 	}
 }
